@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificar Número</title>
+</head>
+<body>
+  <h2>Introduce un número:</h2>
+  <input type="number" id="numeroInput" />
+  <button onclick="verificarNumero()">Verificar</button>
+  <p id="resultado"></p>
+
+  <script>
+    function verificarNumero() {
+      const numero = document.getElementById('numeroInput').value;
+      const resultado = document.getElementById('resultado');
+      if (numero == 45) {
+        resultado.innerHTML = `
+          ¡Número correcto! Aquí tienes tu enlace: <br>
+          <a href="https://www.dropbox.com/scl/fo/xqo08eyq0z6wde8sz8vpz/AKWdoKZuAuBO4aCz0dmWews?rlkey=ud20yq2d0cz5ohr84rrailr50&e=1&st=l744b2zn&dl=0" target="_blank">Abrir enlace de Dropbox</a>
+          <br><br>
+          <strong>Antes de nada lee el AVISO.</strong>
+        `;
+      } else {
+        resultado.textContent = "Ese no es el número correcto.";
+      }
+    }
+  </script>
+</body>
+</html>
