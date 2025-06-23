@@ -7,24 +7,78 @@
 <body>
   <h2>Introduce el número total de <em>easter eggs</em>:</h2>
   <input type="number" id="numeroInput" />
-  <button onclick="verificarNumero()">Comprobar</button>
+  <button id="comprobarBtn" onclick="verificarNumero()">Comprobar</button>
   <p id="resultado"></p>
 
   <script>
+    // --- Configuración ---
+    const NUMERO_SECRETO = 54;
+    const MAX_INTENTOS = 2;
+    const TIEMPO_BLOQUEO_MS = 10000; // 10 segundos
+
+    // --- Variables de estado ---
+    let intentos = 0;
+    let bloqueado = false;
+    let timer = null;
+    let intervalo = null;
+
+    // --- Función principal de verificación ---
     function verificarNumero() {
+      if (bloqueado) return; // Si está bloqueado, no hace nada
+
       const numero = document.getElementById('numeroInput').value;
       const resultado = document.getElementById('resultado');
-      if (numero == 50) {
+      const boton = document.getElementById('comprobarBtn');
+
+      if (numero == NUMERO_SECRETO) {
+        // Si el número es correcto, muestra el mensaje de éxito
         resultado.innerHTML = `
           Felicidades, has llegado al secreto definitivo: <br>
           <a href="https://www.dropbox.com/scl/fo/xqo08eyq0z6wde8sz8vpz/AKWdoKZuAuBO4aCz0dmWews?rlkey=ud20yq2d0cz5ohr84rrailr50&e=1&st=l744b2zn&dl=0" target="_blank">Bibidi Babidi Buu</a>
           <br><br>
           <strong>Lee primero el AVISO.</strong>
         `;
+        intentos = 0; // Reinicia los intentos tras acertar
       } else {
-        resultado.textContent = "Cuenta bien, champ.";
+        // Si el número es incorrecto, aumenta el contador de intentos
+        intentos++;
+        if (intentos >= MAX_INTENTOS) {
+          // Si se supera el máximo de intentos, se bloquea el botón y muestra la cuenta atrás
+          bloqueado = true;
+          boton.disabled = true;
+          let tiempoRestante = TIEMPO_BLOQUEO_MS / 1000;
+          resultado.textContent = `No se trata de probar a lo loco. Espera ${tiempoRestante} segundos y mientras tanto cuenta otra vez.`;
+
+          // Intervalo para actualizar el mensaje cada segundo
+          intervalo = setInterval(() => {
+            tiempoRestante--;
+            resultado.textContent = `No se trata de probar a lo loco. Espera ${tiempoRestante} segundos y mientras tanto cuenta otra vez.`;
+            if (tiempoRestante <= 0) {
+              clearInterval(intervalo);
+            }
+          }, 1000);
+
+          // Temporizador para desbloquear después del tiempo establecido
+          timer = setTimeout(() => {
+            intentos = 0;
+            bloqueado = false;
+            boton.disabled = false;
+            resultado.textContent = '';
+            clearInterval(intervalo);
+          }, TIEMPO_BLOQUEO_MS);
+        } else {
+          // Si aún quedan intentos, muestra los intentos restantes
+          resultado.textContent = `Cuenta bien, champ. Intentos restantes: ${MAX_INTENTOS - intentos}`;
+        }
       }
     }
+
+    // --- Permitir que la tecla Enter también compruebe el número ---
+    document.getElementById('numeroInput').addEventListener('keydown', function(evento) {
+      if (evento.key === 'Enter') {
+        verificarNumero();
+      }
+    });
   </script>
 </body>
 </html>
